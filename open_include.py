@@ -89,7 +89,7 @@ class OpenInclude(sublime_plugin.TextCommand):
 			if path.strip() == '':
 				continue
 
-			extensions = ["", ".coffee", ".hbs", ".jade", ".js", ".scss", ".sass", ".styl", ".less"];
+			extensions = ["", ".coffee", ".hbs", ".jade", ".js", ".scss", ".sass", ".styl", ".less", ".html", ".csx", ".config",".cshtml"];
 			for extension in extensions:
 				# remove quotes
 				path = re.sub('^"|\'', '',  re.sub('"|\'$', '', path.strip()))
@@ -105,7 +105,14 @@ class OpenInclude(sublime_plugin.TextCommand):
 					opened = self.try_open(window, maybe_path)
 					if opened:
 						something_opened = True
-
+				
+				# views
+				if not opened and view.file_name() != None and view.file_name() != '':
+					maybe_path = self.resolve_relative(os.path.dirname(view.file_name()), "views/" + newpath)
+					opened = self.try_open(window, maybe_path)
+					if opened:
+						something_opened = True
+				
 				# relative to view dirname
 				if not opened and view.file_name() != None and view.file_name() != '':
 					maybe_path = self.resolve_relative(os.path.dirname(os.path.dirname(view.file_name())), newpath)
@@ -119,7 +126,7 @@ class OpenInclude(sublime_plugin.TextCommand):
 					opened = self.try_open(window, maybe_path)
 					if opened:
 						something_opened = True
-
+				
 				# relative to view dirname minus two folders
 				if not opened and view.file_name() != None and view.file_name() != '':
 					maybe_path = self.resolve_relative(os.path.dirname(os.path.dirname(view.file_name())), "../../" + newpath)
@@ -153,6 +160,8 @@ class OpenInclude(sublime_plugin.TextCommand):
 					opened = self.try_open(window, newpath)
 					if opened:
 						something_opened = True
+				
+				
 
 		return something_opened
 
